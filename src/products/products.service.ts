@@ -1,5 +1,5 @@
 import { prisma } from "@/server";
-import { Products, Prisma, Colors} from "@prisma/client";
+import { Products, Prisma } from "@prisma/client";
 import { logger } from "@/utils/log";
 
 export class ProductsService {
@@ -34,9 +34,15 @@ export class ProductsService {
   }
   createProduct(product: Products): Promise<Products> {
     try {
-      let productData: Prisma.ProductsCreateInput = {
+      const productData = {
         ...product,
-      };
+        Colors: {
+          connect: { id: product.colorRef }
+        },
+        Categories: {
+          connect: { id: product.categoryRef }
+        }
+      } as Prisma.ProductsCreateInput;
       return prisma.products.create({ data: productData });
     }
     catch (e) {
@@ -47,8 +53,16 @@ export class ProductsService {
 
   updateProduct(id: number, product: Products): Promise<Products> {
     try {
-      // @ts-ignore
-      return prisma.products.update({ where: { id }, data: product });
+      const productData = {
+        ...product,
+        Colors: {
+          connect: { id: product.colorRef }
+        },
+        Categories: {
+          connect: { id: product.categoryRef }
+        }
+      } as Prisma.ProductsCreateInput;
+      return prisma.products.update({ where: { id }, data: productData });
     }
     catch (e) {
       logger.error(e);
