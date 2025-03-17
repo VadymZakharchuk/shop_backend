@@ -1,0 +1,82 @@
+[
+  {
+    "name_uk":"синій",
+    "name_en":"blue",
+    "url": "/colors/Blue.png"
+  },
+  {
+    "name_uk":"бежевий",
+    "name_en":"beige",
+    "url": "/colors/Beige.png"
+  },
+  {
+    "name_uk":"чорний",
+    "name_en":"black",
+    "url": "/colors/Black.png"
+  },
+  {
+    "name_uk":"коричневий",
+    "name_en":"brown",
+    "url": "/colors/Brown.png"
+  },
+  {
+    "name_uk":"бірюзовий",
+    "name_en":"cyan",
+    "url": "/colors/Cyan.png"
+  },
+  {
+    "name_uk":"зелений",
+    "name_en":"green",
+    "url": "/colors/Green.png"
+  },
+  {
+    "name_uk":"сірий",
+    "name_en":"grey",
+    "url": "/colors/Grey.png"
+  },
+  {
+    "name_uk":"індиго",
+    "name_en":"indigo",
+    "url": "/colors/Indigo.png"
+  },
+  {
+    "name_uk":"магента",
+    "name_en":"magenta",
+    "url": "/colors/Magenta.png"
+  },
+  {
+    "name_uk":"оранжевий",
+    "name_en":"orange",
+    "url": "/colors/Orange.png"
+  },
+  {
+    "name_uk":"рожевий",
+    "name_en":"pink",
+    "url": "/colors/Pink.png"
+  },
+  {
+    "name_uk":"фіолетовий",
+    "name_en":"purple",
+    "url": "/colors/Purple.png"
+  },
+  {
+    "name_uk":"червоний",
+    "name_en":"red",
+    "url": "/colors/Red.png"
+  },
+  {
+    "name_uk":"фіолетовий",
+    "name_en":"violet",
+    "url": "/colors/Violet.png"
+  },
+  {
+    "name_uk":"білий",
+    "name_en":"white",
+    "url": "/colors/White.png"
+  },
+  {
+    "name_uk":"жовтий",
+    "name_en":"yellow",
+    "url": "/colors/Yellow.png"
+  }
+]

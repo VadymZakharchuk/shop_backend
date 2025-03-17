@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JsonSchemaMappingsProjectConfiguration">
+    <state>
+      <map>
+        <entry key="data">
+          <value>
+            <SchemaInfo>
+              <option name="generatedName" value="New Schema" />
+              <option name="name" value="data" />
+              <option name="relativePathToSchema" value="src/utils/users.json" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="src/utils/data.json" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="src/utils/users.json" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="src/utils/colors.json" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+      </map>
+    </state>
+  </component>
+</project>

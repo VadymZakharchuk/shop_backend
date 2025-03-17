@@ -1,0 +1,56 @@
+[
+  {
+    "name":"Vadym Zakharchuk",
+    "age":58,
+    "phone":"+380 50 2438030",
+    "email":"vadym.zakharchuk@gmail.com",
+    "countVisits":0,
+    "countOrders":0,
+    "role":"admin",
+    "address":{
+      "country":"Ukraine",
+      "region":"Kyiv",
+      "city":"Kyiv",
+      "street":"0.Balsaque Str.",
+      "building":"77",
+      "apartment":"171",
+      "newPostNo":"221"
+    }
+  },
+  {
+    "name":"Artem Zakharchuk",
+    "age":35,
+    "phone":"+380 50 1112233",
+    "email":"artem.zakharchuk@gmail.com",
+    "countVisits":0,
+    "countOrders":0,
+    "role":"guest",
+    "address":{
+      "country":"Ukraine",
+      "region":"Kyiv",
+      "city":"Kyiv",
+      "street":"Liskivska Str.",
+      "building":"14",
+      "apartment":"117",
+      "newPostNo":"221"
+    }
+  },
+  {
+    "name":"Daryna Stadnik",
+    "age":17,
+    "phone":"+380 50 4445566",
+    "email":"daryna.stadnik@gmail.com",
+    "countVisits":0,
+    "countOrders":0,
+    "role":"guest",
+    "address":{
+      "country":"Ukraine",
+      "region":"Kyiv",
+      "city":"Kyiv",
+      "street":"Vygovskogo Blv.",
+      "building":"24-B",
+      "apartment":"32",
+      "newPostNo":"117"
+    }
+  }
+]
