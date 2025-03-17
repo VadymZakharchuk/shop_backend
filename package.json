@@ -1,5 +1,5 @@
 {
-  "name": "express-course",
+  "name": "backend-shop",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -30,7 +30,7 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.13.10",
     "jest": "^29.7.0",
-    "prisma": "^6.4.1",
+    "prisma": "^6.5.0",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.6",
     "tsconfig-paths": "^4.2.0",

@@ -1,5 +1,5 @@
 import { prisma } from "@/server";
-import { Products } from "@prisma/client";
+import { Products, Prisma, Colors} from "@prisma/client";
 import { logger } from "@/utils/log";
 
 export class ProductsService {
@@ -34,8 +34,10 @@ export class ProductsService {
   }
   createProduct(product: Products): Promise<Products> {
     try {
-      // @ts-ignore
-      return prisma.products.create({ data: product });
+      let productData: Prisma.ProductsCreateInput = {
+        ...product,
+      };
+      return prisma.products.create({ data: productData });
     }
     catch (e) {
       logger.error(e);

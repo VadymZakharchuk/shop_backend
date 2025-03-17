@@ -10,6 +10,12 @@ router.get('/',
   res.status(200).json(colors);
 })
 
+router.get('/:id',
+  async (req, res) => {
+    const color = await colorsService.getColorOne(req.params.id);
+    res.status(200).json(color);
+  })
+
 router.post('/',
   async (req, res) => {
     const color = req.body;

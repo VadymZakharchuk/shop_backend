@@ -15,54 +15,48 @@ model Colors {
   Products Products[]
 }
 
-model Users {
-  id          Int     @id @default(autoincrement())
-  name        String?
-  email       String  @unique
-  phone       String  @unique
-  password    String
-  countOrders Int     @default(0)
-  countVisits Int     @default(0)
-  role        Role    @default(GUEST)
-  address     Json
-}
-
 model Products {
-  id             Int     @id @default(autoincrement())
-  name_uk        String  @default("none")
-  name_en        String  @default("none")
-  description_uk String  @db.Text
-  description_en String  @db.Text
-  price          Float   @default(0)
-  discount       Float   @default(0)
-  isNew          Boolean @default(false)
-  isArchived     Boolean @default(false)
+  id             Int           @id @default(autoincrement())
+  name_uk        String        @default("none")
+  name_en        String        @default("none")
+  description_uk String        @db.Text
+  description_en String        @db.Text
+  price          Float         @default(0)
+  discount       Float         @default(0)
+  isNew          Boolean       @default(false)
+  isArchived     Boolean       @default(false)
   colorRef       Int
-  size           Size    @default(L)
-  sex            Sex     @default(UNISEX)
+  size           Products_size @default(L)
+  sex            Products_sex  @default(UNISEX)
   options        Json?
   imageUrl       Json?
-  Colors         Colors  @relation(fields: [colorRef], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "colorFK")
+  Colors         Colors        @relation(fields: [colorRef], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "colorFK")
 
   @@index([colorRef], map: "colorFK_idx")
   @@index([name_uk, name_en], map: "indexNameUk")
   @@index([name_uk], map: "nameUk_idx")
 }
 
-enum Role {
+model Users {
+  id          Int        @id @default(autoincrement())
+  name        String?
+  email       String     @unique
+  phone       String     @unique
+  password    String
+  countOrders Int        @default(0)
+  countVisits Int        @default(0)
+  role        Users_role @default(GUEST)
+  address     Json
+}
+
+enum Users_role {
   ADMIN
   CLIENT
   GUEST
   SELLER
 }
 
-enum Sex {
-  MAN
-  WOMAN
-  UNISEX
-}
-
-enum Size {
+enum Products_size {
   XS
   S
   M
@@ -70,4 +64,10 @@ enum Size {
   XL
   XXL
   XXXL
+}
+
+enum Products_sex {
+  MAN
+  WOMAN
+  UNISEX
 }
