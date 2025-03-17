@@ -5,11 +5,12 @@ import { logger } from "@/utils/log";
 import helmet from "helmet";
 import cors from "cors";
 import compression from "compression";
+import * as process from "node:process";
 import { authRouter } from "@/auth/auth.controller";
 import { colorsRouter } from "./colors/colors.controller";
 import { usersRouter } from "@/users/users.controller";
 import { productsRouter } from "@/products/products.controller";
-import * as process from "node:process";
+import { categoriesRouter } from "@/categories/categories.controller";
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ async function main() {
   app.use('/api/colors', colorsRouter)
   app.use('/api/users', usersRouter)
   app.use('/api/products', productsRouter)
+  app.use('/api/categories', categoriesRouter)
 
   app.all('*', (req, res) => {
     res.status(404).send('Route not Found');

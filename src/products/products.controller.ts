@@ -13,7 +13,11 @@ router.get('/',
 
 router.get('/:id',
   async (req, res) => {
-    const products: Products[] = await productsService.getProductOne(req.params.id);
+    const products: Products | null = await productsService.getProductOne(req.params.id);
+    if (!products) {
+      res.status(404).send('Product not found');
+      return;
+    }
     res.status(200).json(products);
   })
 
@@ -27,16 +31,14 @@ router.post('/',
 
 router.put('/:id',
   async (req, res) => {
-    const id = parseInt(req.params.id);
-    const user = await productsService.updateProduct(id, req.body);
+    const user = await productsService.updateProduct(req.params.id, req.body);
     res.status(201).json(user);
   }
 )
 
 router.delete('/:id',
   async (req, res) => {
-    const id = parseInt(req.params.id);
-    await productsService.deleteProduct(id);
+    await productsService.deleteProduct(req.params.id);
     res.status(204).send();
   })
 export const productsRouter = router;
