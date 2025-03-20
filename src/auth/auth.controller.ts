@@ -22,7 +22,7 @@ router.post('/login', authValidation,
         },
         process.env.JWT_SECRET as PrivateKey,
         {
-            expiresIn: "24h"
+            expiresIn: "12h"
         })
     res.status(201).json({token: jwtToken, user:authUser });
 })

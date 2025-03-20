@@ -33,6 +33,7 @@ model Products {
   imageUrl       String?
   Categories     Categories    @relation(fields: [categoryRef], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "categoryFK")
   Colors         Colors        @relation(fields: [colorRef], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "colorFK")
+  Stock          Stock[]
 
   @@index([colorRef], map: "colorFK_idx")
   @@index([name_uk, name_en], map: "indexNameUk")
@@ -50,6 +51,7 @@ model Users {
   countVisits Int        @default(0)
   role        Users_role @default(GUEST)
   address     Json
+  Orders      Orders[]
 }
 
 model Categories {
@@ -62,6 +64,57 @@ model Categories {
   imageUrl       String?    @default("none")
   level_len      Int?
   Products       Products[]
+}
+
+model Orders {
+  id         Int                @id @default(autoincrement())
+  orderNo    String?            @db.VarChar(45)
+  orderDate  DateTime?          @default(now()) @db.DateTime(0)
+  stockRef   Int                @default(1)
+  quantity   Int?
+  operStatus Orders_operStatus? @default(STOCK)
+  operDate   DateTime?          @db.DateTime(0)
+  userRef    Int?
+  Stock      Stock              @relation(fields: [stockRef], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "stockFK")
+  Users      Users?             @relation(fields: [userRef], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "userFK")
+
+  @@index([stockRef], map: "stockFK")
+  @@index([userRef], map: "userFK")
+}
+
+model Stock {
+  id           Int       @id @default(autoincrement())
+  productRef   Int       @default(5)
+  supplierRef  Int       @default(1)
+  docName      String?   @default("Видаткова накладна") @db.VarChar(45)
+  docNo        String?   @default("1") @db.VarChar(45)
+  docDate      DateTime  @default(now()) @db.DateTime(0)
+  countStock   Int       @default(0)
+  docPrice     Float     @default(0) @db.Float
+  docTotal     Float?    @db.Float
+  countShop    Int?      @default(0)
+  countOrdered Int?      @default(0)
+  countSold    Int?      @default(0)
+  lastUpdated  DateTime  @default(now()) @db.DateTime(0)
+  Orders       Orders[]
+  Products     Products  @relation(fields: [productRef], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkProduct")
+  Suppliers    Suppliers @relation(fields: [supplierRef], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fkSupplier")
+
+  @@index([supplierRef], map: "fkSupplier_idx")
+  @@index([productRef], map: "primaryNDX")
+}
+
+model Suppliers {
+  id          Int                  @id @default(autoincrement())
+  name        String?              @db.VarChar(45)
+  address     String?              @db.VarChar(128)
+  contact     String?              @db.VarChar(45)
+  eMail       String?              @db.VarChar(45)
+  phone       String?              @db.VarChar(45)
+  messenger   Suppliers_messenger?
+  messengerId String?              @db.VarChar(45)
+  notes       String?              @db.Text
+  Stock       Stock[]
 }
 
 enum Users_role {
@@ -85,4 +138,18 @@ enum Products_sex {
   MAN
   WOMAN
   UNISEX
+}
+
+enum Orders_operStatus {
+  STOCK
+  SHOP
+  ORDERED
+  SOLD
+}
+
+enum Suppliers_messenger {
+  VIBER
+  WHATSAPP
+  TELEGRAM
+  OTHER
 }

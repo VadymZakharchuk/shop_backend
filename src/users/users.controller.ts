@@ -1,7 +1,7 @@
 import Router from 'express';
 import { UsersService } from '@/users/users.service';
 import { Users } from "@prisma/client";
-
+import { auth } from '@/middleware/auth.middleware';
 const router = Router();
 const usersService = new UsersService();
 

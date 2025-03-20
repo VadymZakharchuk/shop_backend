@@ -11,6 +11,8 @@ import { colorsRouter } from "./colors/colors.controller";
 import { usersRouter } from "@/users/users.controller";
 import { productsRouter } from "@/products/products.controller";
 import { categoriesRouter } from "@/categories/categories.controller";
+import { stockRouter } from "@/stock/stock.controller";
+import { ordersRouter } from "@/orders/orders.controller";
 
 dotenv.config();
 
@@ -31,6 +33,8 @@ async function main() {
   app.use('/api/users', usersRouter)
   app.use('/api/products', productsRouter)
   app.use('/api/categories', categoriesRouter)
+  app.use('/api/stock', stockRouter)
+  app.use('/api/orders', ordersRouter)
 
   app.all('*', (req, res) => {
     res.status(404).send('Route not Found');

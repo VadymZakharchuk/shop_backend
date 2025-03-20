@@ -4,11 +4,11 @@ import { Users, Prisma } from "@prisma/client";
 
 export class AuthService {
 
-  static async isPhoneExist (creds: Pick<Users, 'phone'>) {
+  static async isPhoneExist (credits: Pick<Users, 'phone'>) {
     try {
       return await prisma.users.findUnique({
         where: {
-          phone: creds.phone,
+          phone: credits.phone,
         }
       })
     }
@@ -18,11 +18,11 @@ export class AuthService {
     }
   }
 
-  static async login (creds: Pick<Users, 'phone'>) {
+  static async login (credits: Pick<Users, 'phone'>) {
     try {
       return await prisma.users.findUnique({
         where: {
-          phone: creds.phone,
+          phone: credits.phone,
         }
       })
     }
@@ -31,13 +31,13 @@ export class AuthService {
       throw new Error('login service error');
     }
   }
-  static async signUp (creds: Pick<Users, 'email' | 'phone' | 'password'>) {
+  static async signUp (credits: Pick<Users, 'email' | 'phone' | 'password'>) {
     let userData: Prisma.UsersCreateInput
     userData = {
       name: '',
-      email: creds.email,
-      phone: creds.phone,
-      password: creds.password,
+      email: credits.email,
+      phone: credits.phone,
+      password: credits.password,
       countOrders: 0,
       countVisits: 0,
       role: 'CLIENT',
