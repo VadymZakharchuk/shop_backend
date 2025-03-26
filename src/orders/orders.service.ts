@@ -1,6 +1,6 @@
 import { prisma } from "@/server";
 import { logger } from "@/utils/log";
-import { Orders } from "@prisma/client";
+import {Orders, Orders_operStatus} from "@prisma/client";
 
 type nextOrderNo = {
   f0: string
@@ -63,7 +63,7 @@ export class OrdersService {
       }
 
       if (!isTransactionAvailable) { return result }
-
+      // change stock status
       for (const item of orderItems) {
         await prisma.stock.update({
           where: { id: item.stockRef },
@@ -77,11 +77,43 @@ export class OrdersService {
           }
         })
       }
+      // insert into orders
       return await prisma.orders.createMany({ data: [...orderItems] })
     }
     catch (e) {
       logger.error(e);
-      throw new Error(`insertInto service error ${e}`);
+      throw new Error(`createOrder service error ${e}`);
+    }
+  }
+  async verifyStockUpdates(orderItems: Orders[]) {
+    const newStatus: Orders_operStatus = orderItems[0].operStatus || 'STOCK'
+    const enumArr = Array.from(Object.values(Orders_operStatus));
+    const indexNew = enumArr.indexOf(newStatus)
+    try {
+      const orders = await prisma.orders.findMany({
+        where: { orderNo: orderItems[0].orderNo }
+      })
+      const oldStatus = orders[0].operStatus || 'STOCK'
+      const indexOld = enumArr.indexOf(oldStatus)
+      const isForward = indexNew > indexOld ? 1 : 0
+      const itemsJson = JSON.stringify(orderItems)
+      const resValidation = await prisma.$queryRaw`call verifyStockUpdates(${itemsJson}, ${isForward})`
+      const res: object & { f0: string } = Array.from(Object.values(resValidation as object))[0]
+      return !res.f0.includes('0')
+    }
+    catch (e) {
+      logger.error(e);
+      throw new Error(`verifyStockUpdates service error ${e}`);
+    }
+  }
+  async updateOrder(orderItems: Orders[]) {
+    try {
+      const isValid = this.verifyStockUpdates(orderItems)
+      return isValid
+    }
+    catch (e) {
+      logger.error(e);
+      throw new Error(`updateOrder service error ${e}`);
     }
   }
 

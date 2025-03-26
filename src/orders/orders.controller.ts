@@ -26,12 +26,13 @@ router.put('/:id', async (req, res) => {
   res.status(200).json(orders);
 })
 
-router.delete('/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
   const orders = await ordersService.deleteOne(req.params.id);
   res.status(200).json(orders);
 })
 
-router.put('/status/:id', async (req, res) => {
-
+router.put('/update/:id', async (req, res) => {
+  const orders = await ordersService.updateOrder(req.body);
+  res.status(200).json(orders);
 })
 export const ordersRouter = router;
