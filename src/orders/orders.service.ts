@@ -106,10 +106,11 @@ export class OrdersService {
       throw new Error(`verifyStockUpdates service error ${e}`);
     }
   }
-  async updateOrder(orderItems: Orders[]) {
+  async updateOrder(orderId: string, orderItems: Orders[]) {
+    const itemsJson = JSON.stringify(orderItems)
     try {
-      const isValid = this.verifyStockUpdates(orderItems)
-      return isValid
+      const result = await prisma.$queryRaw`call stockManager(${orderId}, ${itemsJson})`
+      return Array.from(Object.values(result as object))
     }
     catch (e) {
       logger.error(e);

@@ -32,7 +32,7 @@ router.put('/:id', async (req, res) => {
 })
 
 router.put('/update/:id', async (req, res) => {
-  const orders = await ordersService.updateOrder(req.body);
+  const orders = await ordersService.updateOrder(req.params.id, req.body);
   res.status(200).json(orders);
 })
 export const ordersRouter = router;
