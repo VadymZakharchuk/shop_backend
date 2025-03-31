@@ -1,6 +1,7 @@
 import { prisma } from "@/server";
 import { logger } from "@/utils/log";
 import {Orders, Orders_operStatus} from "@prisma/client";
+import {formatMySqlRes, IMySqlRes} from "@/utils/formatMySqlRes";
 
 type nextOrderNo = {
   f0: string
@@ -109,8 +110,8 @@ export class OrdersService {
   async updateOrder(orderId: string, orderItems: Orders[]) {
     const itemsJson = JSON.stringify(orderItems)
     try {
-      const result = await prisma.$queryRaw`call stockManager(${orderId}, ${itemsJson})`
-      return Array.from(Object.values(result as object))
+      const result: IMySqlRes[] = await prisma.$queryRaw`call stockManager(${orderId}, ${itemsJson})`
+      return formatMySqlRes(result)
     }
     catch (e) {
       logger.error(e);

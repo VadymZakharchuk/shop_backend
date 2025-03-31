@@ -7,3 +7,4 @@
 {"clientVersion":"6.5.0","code":"P2010","level":"error","meta":{"code":"1054","message":"Unknown column 'id' in 'field list'"},"name":"PrismaClientKnownRequestError","timestamp":"2025-03-29T08:40:09.678Z"}
 {"clientVersion":"6.5.0","code":"P2010","level":"error","meta":{"code":"1054","message":"Unknown column 'queryRes' in 'field list'"},"name":"PrismaClientKnownRequestError","timestamp":"2025-03-29T08:40:47.563Z"}
 {"clientVersion":"6.5.0","code":"P2010","level":"error","meta":{"code":"1050","message":"Table 'queryRes' already exists"},"name":"PrismaClientKnownRequestError","timestamp":"2025-03-29T08:59:27.101Z"}
+{"clientVersion":"6.5.0","code":"P2010","level":"error","meta":{"code":"1062","message":"Duplicate entry '11' for key 'reqdata.PRIMARY'"},"name":"PrismaClientKnownRequestError","timestamp":"2025-03-31T12:00:43.327Z"}
