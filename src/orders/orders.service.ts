@@ -86,27 +86,7 @@ export class OrdersService {
       throw new Error(`createOrder service error ${e}`);
     }
   }
-  async verifyStockUpdates(orderItems: Orders[]) {
-    const newStatus: Orders_operStatus = orderItems[0].operStatus || 'STOCK'
-    const enumArr = Array.from(Object.values(Orders_operStatus));
-    const indexNew = enumArr.indexOf(newStatus)
-    try {
-      const orders = await prisma.orders.findMany({
-        where: { orderNo: orderItems[0].orderNo }
-      })
-      const oldStatus = orders[0].operStatus || 'STOCK'
-      const indexOld = enumArr.indexOf(oldStatus)
-      const isForward = indexNew > indexOld ? 1 : 0
-      const itemsJson = JSON.stringify(orderItems)
-      const resValidation = await prisma.$queryRaw`call verifyStockUpdates(${itemsJson}, ${isForward})`
-      const res: object & { f0: string } = Array.from(Object.values(resValidation as object))[0]
-      return !res.f0.includes('0')
-    }
-    catch (e) {
-      logger.error(e);
-      throw new Error(`verifyStockUpdates service error ${e}`);
-    }
-  }
+
   async updateOrder(orderId: string, orderItems: Orders[]) {
     const itemsJson = JSON.stringify(orderItems)
     try {
@@ -132,16 +112,6 @@ export class OrdersService {
   async deleteOne(id: string) {
     try {
       return await prisma.orders.delete({ where: { id: +id } });
-    }
-    catch (e) {
-      logger.error(e);
-      throw new Error('deleteOne service error');
-    }
-  }
-
-  async updateOrderStatus(orderId: string, orderStatus: string, direction = true) {
-    try {
-      return await prisma.$executeRaw`call updateOrderStockStatus(${orderId}, ${orderStatus}, ${direction})`;
     }
     catch (e) {
       logger.error(e);
