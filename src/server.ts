@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
+import { MongoClient } from 'mongodb'
 import { logger } from "@/utils/log";
 import helmet from "helmet";
 import cors from "cors";
@@ -13,6 +14,7 @@ import { productsRouter } from "@/products/products.controller";
 import { categoriesRouter } from "@/categories/categories.controller";
 import { stockRouter } from "@/stock/stock.controller";
 import { ordersRouter } from "@/orders/orders.controller";
+import { chatRouter } from "@/chat/chat.controller";
 
 dotenv.config();
 
@@ -20,6 +22,8 @@ const app = express();
 export const prisma = new PrismaClient()
 const PORT = process.env.PORT || 3000;
 
+const mongoUrl = process.env.MONGODB_URL || "mongodb://localhost:27017/shop";
+export const mongo = new MongoClient(mongoUrl)
 async function main() {
   app.use(express.json());
   app.use(helmet({
@@ -29,6 +33,7 @@ async function main() {
   app.use(compression());
 
   app.use('/api/auth', authRouter)
+  app.use('/api/chat', chatRouter)
   app.use('/api/colors', colorsRouter)
   app.use('/api/users', usersRouter)
   app.use('/api/products', productsRouter)
@@ -51,9 +56,26 @@ async function main() {
 }
 
 main()
-.then(async() => await prisma.$connect())
+.then(async() => {
+  await prisma.$connect()
+  await runMongo()
+})
 .catch(async error => {
   logger.error(error)
   await prisma.$disconnect()
   process.exit(1)
 });
+
+async function runMongo() {
+  try {
+    // Connect the client to the server
+    await mongo.connect();
+    // Send a ping to confirm a successful connection
+    // await mongo.db("admin").command({ ping: 1 });
+    console.log("Successfully connected to MongoDB!");
+  } catch (error) {
+    logger.error(error)
+    await mongo.close()
+    process.exit(1)
+  }
+}
