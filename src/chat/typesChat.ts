@@ -5,6 +5,7 @@ export interface Chat {
   room: string;
   message: string;
   files?: string;
+  authorId: ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -1,15 +1,11 @@
-import {logger} from "@/utils/log";
-import {mongo} from "@/server";
-import type {Chat} from "@/chat/typesChat";
-import {ObjectId} from "mongodb";
+import { logger } from "@/utils/log";
+import {IMessage, IMessagePopulated} from "@/mongoose/modelsTypes";
+import Message from "@/mongoose/models/Message";
 
 export class ChatService {
-  async getAll(query: object) {
-    const db = mongo.db('chat')
-    const colChat = db.collection<Chat[]>('messages')
+  async getAll(query: object): Promise<IMessagePopulated[]> {
     try {
-      const cursor = colChat.find({...query});
-      return await cursor.toArray();
+      return await Message.find({...query}).populate('authorId') as unknown as IMessagePopulated[]
     }
     catch (e) {
       logger.error(e);
@@ -17,54 +13,28 @@ export class ChatService {
     }
   }
 
-  async updateMessage(query: Partial<Chat> & { _id: string }) {
-    if (!query || !('_id' in query) || !query._id) return new Error('mongo chat->messages->updateMessage missed _id')
-    const db = mongo.db('chat')
-    const colChat = db.collection<Chat>('messages')
-    const filter = { _id:  new ObjectId(query._id) }
-    delete (query as any)._id
-    const updateDoc = {
-      $set: {
-        ...query,
-        'updatedAt': new Date(),
-      }
-    }
+  async updateMessage(id: string, data: Promise<IMessage>) {
     try {
-      return colChat.updateOne(filter, updateDoc);
+      return await Message.findOneAndUpdate({ _id: id }, data, { new: true });
     }
     catch (e) {
       logger.error(e);
       throw new Error('mongo chat->messages->getAll service error');
     }
   }
-  async createMessage(data: Omit<Chat, '_id' | 'createdAt' | 'updatedAt'>): Promise<Chat> {
-    const db = mongo.db('chat');
-    const colChat = db.collection<Chat>('messages');
-
-    const newMessage: Chat = {
-      _id: new ObjectId(),
-      room: data.room || 'common',
-      message: data.message,
-      files: data.files || '',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
+  async createMessage(data:Promise<IMessage[]>): Promise<IMessage> {
     try {
-      await colChat.insertOne(newMessage);
-      return newMessage;
+      const message = new Message(data)
+      await message.save()
+      return message
     } catch (error) {
       logger.error(error);
       throw new Error('mongo chat->messages->createMessage service error');
     }
   }
-  async deleteMessage(id: string): Promise<boolean> {
-    const db = mongo.db('chat');
-    const colChat = db.collection<Chat>('messages');
-
+  async deleteMessage(id: string): Promise<boolean | string> {
     try {
-      const result = await colChat.deleteOne({ _id: new ObjectId(id) });
-      return result.deletedCount === 1;
+      return await Message.findOneAndDelete({_id: id}) || 'success';
     } catch (error) {
       logger.error(error);
       throw new Error('mongo chat->messages->deleteMessage service error');
