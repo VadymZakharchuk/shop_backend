@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import {type Document, Types} from "mongoose";
 
 export interface ICustomer {
   name: string;
@@ -19,4 +19,11 @@ export interface IMessage {
 
 export type IMessagePopulated = Omit<IMessage, 'authorId'> & {
   authorId: ICustomer;
+}
+
+export interface IFile extends Document {
+  filename: string;
+  filepath: string;
+  userId: string;
+  uploadDate: Date;
 }

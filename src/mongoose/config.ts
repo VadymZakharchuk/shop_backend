@@ -1,36 +1,36 @@
-import mongoose from "mongoose"
-import { GridFSBucket } from 'mongodb';
+import mongoose, { Connection} from "mongoose"
+import Grid from "gridfs-stream"
+import { FilesService } from "@/files/files.service";
+import { filesRouter } from "@/files/files.controller";
+import { app } from "@/server";
 
-export let gfs: GridFSBucket | null = null;
-export async function connectMongoDB() {
-  const url = process.env.MONGODB_URL || "mongodb://localhost:27017/shop"
+let gfs: Grid.Grid | null = null
+let conn: Connection
+export const connectMongoDB = async () => {
+  const url = process.env.MONGODB_URL || "mongodb://localhost:27017/chat"
 
   try {
     await mongoose.connect(url)
-    console.log(`Database connected: ${url}`)
+    const db = mongoose.connection
+    gfs = Grid(db, mongoose.mongo)
+    gfs.collection("uploads")
+
+    console.log("✅ Multer GridFS initialized")
+
+    const filesService = new FilesService();
+    const filesRoutes = filesRouter(filesService);
+    app.use("/api/files", filesRoutes);
+    console.log("✅ fileRouter connected")
+
   } catch (err) {
-    if (err instanceof Error) {
-      console.error(err.message)
-    } else {
-      console.error('Unknown error', err)
-    }
-    process.exit(1);
+    console.error("❌ DB connection or storage init error", err)
+    process.exit(1)
   }
-  const conn = mongoose.connection
+}
 
-  conn.once('open', () => {
-    console.log('MongoDB connection open');
-    gfs = new mongoose.mongo.GridFSBucket(conn.db!, {
-      bucketName: 'uploads'
-    });
-  })
-
-  conn.on('connected', () => console.log(`Database connected: ${url}`))
-  conn.on('open', () => console.log('open'))
-  conn.on('disconnected', () => console.log('disconnected'))
-  conn.on('reconnected', () => console.log('reconnected'))
-  conn.on('disconnecting', () => console.log('disconnecting'))
-  conn.on('close', () => console.log('close'))
-  conn.on("error", (err) => { console.error(`connection error: ${err}`) })
-  return;
+export const getGfs = (): Grid.Grid => {
+  if (!gfs) {
+    throw new Error("❌ GridFS not initialized")
+  }
+  return gfs
 }

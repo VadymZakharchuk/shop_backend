@@ -1,47 +1,87 @@
-import { Request, Response } from 'express'
-import mongoose from "mongoose";
-import Grid from "gridfs-stream";
-import { gfs } from "@/mongoose/gridfs";
-export class FilesService {
-  async uploadFile(req: Request, res: Response): Promise<void> {
-    if (!req.file) {
-      res.status(400).json({ error: 'No file uploaded' })
-      return
-    }
+import { Request, Response } from 'express';
+import mongoose from 'mongoose';
+import {Db, GridFSBucket, ObjectId} from 'mongodb';
+import { Readable } from 'stream';
 
-    res.status(200).json({
-      message: 'File uploaded successfully',
-      file: req.file,
+export class FilesService {
+  private bucket: GridFSBucket;
+
+  constructor() {
+    this.bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db as Db, {
+      bucketName: 'uploads',
     });
   }
 
-  async getFile(req: Request, res: Response): Promise<void> {
-    try {
-      const file = await gfs.files.findOne({ filename: req.params.filename });
+  async uploadFile(req: Request): Promise<ObjectId | null> {
+    if (!req.file) {
+      console.error('No file uploaded in the request.');
+      return null;
+    }
+    const userId = req.body.userId || 'anonymous'
+    return new Promise((resolve, reject) => {
+      const uploadStream = this.bucket.openUploadStream(req.file!.originalname, {
+        contentType: req.file!.mimetype,
+        metadata: {
+          userId: userId,
+          metadata: req.body.metadata ? JSON.parse(req.body.metadata) : {}
+        }
+      });
 
-      if (!file) {
+      const fileStream = Readable.from(req.file!.buffer);
+
+      fileStream.pipe(uploadStream)
+        .on('finish', () => {
+          resolve(uploadStream.id);
+        })
+        .on('error', (error) => {
+          console.error('Error uploading file to GridFS:', error);
+          reject(error);
+        });
+    });
+  }
+
+  async getFileById(id: string, res: Response): Promise<void> {
+    try {
+      const fileId = new ObjectId(id);
+      const downloadStream = this.bucket.openDownloadStream(fileId);
+      const fileInfo = await this.bucket.find({ _id: fileId }).toArray();
+
+      if (!fileInfo || fileInfo.length === 0) {
         res.status(404).json({ error: 'File not found' });
         return;
       }
 
-      const readStream = gfs.createReadStream(file.filename);
-      res.set('Content-Type', file.contentType || 'application/octet-stream');
-      readStream.pipe(res);
-    }
-    catch (err) {
-      res.status(500).json({ error: 'Error fetching file' });
+      res.setHeader('Content-Type', fileInfo[0].contentType || 'application/octet-stream');
+      downloadStream.pipe(res);
+    } catch (error) {
+      console.error('Error getting file by ID from GridFS:', error);
+      res.status(500).json({ error: 'Failed to retrieve file' });
     }
   }
 
-  async deleteFile(req: Request, res: Response): Promise<void> {
+  async getFileMetadataById(id: string): Promise<any | null> {
     try {
-      gfs.remove({ filename: req.params.filename, root: 'uploads' }, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'File deleted' });
-      });
+      const fileId = new ObjectId(id);
+      const fileInfo = await this.bucket.find({ _id: fileId }).toArray();
+      if (!fileInfo || fileInfo.length === 0) {
+        return null;
+      }
+      return fileInfo[0];
+    } catch (error) {
+      console.error('Error getting file metadata by ID from GridFS:', error);
+      return null;
     }
-    catch (err) {
-      res.status(500).json({ error: 'Error deleting file' });
+  }
+
+  async deleteFile(id: string): Promise<boolean> {
+    try {
+      const fileId = new ObjectId(id);
+      await this.bucket.delete(fileId);
+      console.log(`File with ID "${id}" deleted successfully from GridFS.`);
+      return true;
+    } catch (error) {
+      console.error('Error deleting file from GridFS:', error);
+      return false;
     }
   }
 }

@@ -7,8 +7,7 @@ import { categoriesRouter } from "@/categories/categories.controller";
 import { stockRouter } from "@/stock/stock.controller";
 import { ordersRouter } from "@/orders/orders.controller";
 import { chatRouter } from "@/chat/chat.controller";
-import {customersRouter} from "@/customers/customers.controller";
-
+import { customersRouter } from "@/customers/customers.controller";
 
 const router = Router();
 
@@ -21,5 +20,6 @@ router.use("/products", productsRouter);
 router.use("/categories", categoriesRouter);
 router.use("/stock", stockRouter);
 router.use("/orders", ordersRouter);
+router.use("/customers", customersRouter);
 
 export const apiRouter = router;
